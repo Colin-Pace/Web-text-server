@@ -8,7 +8,7 @@ const cors = require( 'cors' );
 
 const assert = require( 'assert' );
 
-const { PORT, DATABASE_URL } = require('./config');
+const { DATABASE_URL } = require('./config');
 
 
 
