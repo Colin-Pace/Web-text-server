@@ -54,7 +54,6 @@ app.use((error, req, res, next) => {
 
 
 
-
 app.post( '/login', (req, res) => {
 
   let userName = req.body.userName;
@@ -400,7 +399,6 @@ app.all( '/deleteFolder/', (req, res) => {
 
   let folderID = req.body.folderID;
 
-
   knexInstance( 'folders' )
 
     .where( 'folder_id', folderID )
@@ -482,7 +480,6 @@ app.post( '/createNote', (req, res) => {
 app.get( '/viewNote/:noteName', (req, res) => {
 
   let noteName = req.params.noteName;
-
 
   knexInstance
 
@@ -568,7 +565,6 @@ app.all( '/deleteNote', (req, res) => {
 
   let noteID = req.body.noteID;
 
-
   knexInstance( 'notes' )
 
     .where( { 'note_id': noteID } )
@@ -621,8 +617,4 @@ app.all( '/deleteAccount', (req, res) => {
 })
 
 
-
-
-app.listen(PORT, () => {
-  console.log(`Server listening at http://localhost:${PORT}`)
-})
+module.exports = app;
