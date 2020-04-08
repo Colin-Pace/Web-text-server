@@ -66,40 +66,64 @@ app.post( '/login', (req, res) => {
 
   knexInstance
 
-  .select( 'user_name', 'user_pw', 'user_id' )
+    .select( 'user_name', 'user_pw', 'user_id' )
 
-  .from( 'users' )
+    .from( 'users' )
 
-  .where( { 'user_name': userName, 'user_pw': password } )
-
-  .then( result => {
-
-    if (result.length === 0) {
-
-      res.send(400);
-
-      return;
-    }
-
-    let userId = result[0].user_id;
-
-    knexInstance
-
-    .select( 'users' )
-
-    .from( 'sessions' )
-
-    .where( { 'users': userId } )
+    .where( { 'user_name': userName, 'user_pw': password } )
 
     .then( result => {
 
-      if (result[0] === undefined) {
+      if (result.length === 0) {
 
-        knexInstance ('sessions')
+        res.send(400);
+
+        return;
+      }
+
+      let userId = result[0].user_id;
+
+      knexInstance
+
+      .select( 'users' )
+
+      .from( 'sessions' )
+
+      .where( { 'users': userId } )
+
+      .then( result => {
+
+        if (result[0] === undefined) {
+
+          knexInstance ('sessions')
+
+            .returning('users')
+
+            .insert( { auth_token: authToken, users: userId } )
+
+            .then( result => {
+
+              if ( result[0] === undefined ) {
+
+                res.sendStatus(400);
+
+              } else {
+
+                res.sendStatus(200);
+
+              }
+
+            })
+
+        } else {
+
+          knexInstance('sessions')
 
           .returning('users')
 
-          .insert( { auth_token: authToken, users: userId } )
+          .where('users', '=', userId)
+
+          .update({ auth_token: authToken })
 
           .then( result => {
 
@@ -112,34 +136,10 @@ app.post( '/login', (req, res) => {
               res.sendStatus(200);
 
             }
-
           })
-
-      } else {
-
-        knexInstance('sessions')
-
-        .returning('users')
-
-        .where('users', '=', userId)
-
-        .update({ auth_token: authToken })
-
-        .then( result => {
-
-          if ( result[0] === undefined ) {
-
-            res.sendStatus(400);
-
-          } else {
-
-            res.sendStatus(200);
-
-          }
-        })
-      }
+        }
+      })
     })
-  })
 })
 
 
@@ -184,6 +184,7 @@ app.post( '/registration', (req, res) => {
   }
 
   if (password.length > 72) {
+
     message = 'Password must be less than 72 characters';
 
   }
@@ -200,6 +201,13 @@ app.post( '/registration', (req, res) => {
 
   }
 
+  if (message !== undefined) {
+
+    res.sendStatus(400);
+
+    return;
+
+  }
 
   knexInstance( 'users' )
 
@@ -544,7 +552,6 @@ app.patch( '/editNoteName', (req, res) => {
 
   assert (noteId !== null && noteName !== null)
 
-
   knexInstance( 'notes' )
 
     .where( { 'note_id': noteId } )
@@ -610,8 +617,6 @@ app.all( '/deleteAccount', (req, res) => {
     .del()
 
     .then( result => {
-
-      console.log(result);
 
       if (result === 0) {
 
