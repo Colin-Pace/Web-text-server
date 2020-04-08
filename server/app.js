@@ -161,13 +161,13 @@ app.post( '/registration', (req, res) => {
 
   if (userName.length < 8) {
 
-    message = 'Password must be longer than 8 characters';
+    message = 'User name must be longer than 8 characters';
 
   }
 
   if (userName.length > 72) {
 
-    message = 'Password must be less than 72 characters';
+    message = 'User name must be less than 72 characters';
 
   }
 
@@ -609,6 +609,8 @@ app.all( '/deleteAccount', (req, res) => {
   const userName = req.body.userName;
 
   const password = req.body.password;
+
+  if (userName === "User Name") return;
 
   knexInstance( 'users' )
 
