@@ -74,6 +74,13 @@ app.post( '/login', (req, res) => {
 
   .then( result => {
 
+    if (result.length === 0) {
+
+      res.send(400);
+
+      return;
+    }
+
     let userId = result[0].user_id;
 
     knexInstance
@@ -596,14 +603,22 @@ app.all( '/deleteAccount', (req, res) => {
 
   const password = req.body.password;
 
-
   knexInstance( 'users' )
 
-    .where( 'user_name', userName )
+    .where( {'user_name': userName, 'user_pw': password } )
 
     .del()
 
     .then( result => {
+
+      console.log(result);
+
+      if (result === 0) {
+
+        res.sendStatus(400);
+
+        return;
+      }
 
       let data = {
 
