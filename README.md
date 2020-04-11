@@ -19,3 +19,5 @@ Screenshots: https://github.com/Colin-Pace/Web-Text-client/tree/master/Applicati
  
  Technology: React, Express, Knex, PostgreSQL
 
+
+![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
